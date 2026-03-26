@@ -1,10 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-const LoginPage = () => {
-  const navigate = useNavigate();
-  {/*const handleSubmit = (e) => {
+const Register = () => {
+    const navigate = useNavigate();
+  const handleSubmit = (e) => {
     e.preventDefault();
-  }; */}
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#bdefff] p-6 relative overflow-hidden font-sans">
@@ -35,14 +35,24 @@ const LoginPage = () => {
         backdrop-blur-[22px]">
 
         <h1 className="text-[clamp(34px,3vw,40px)] font-extrabold text-[#062447] mb-8">
-          Welcome Back
+          Create Account
         </h1>
 
-        <form className="flex flex-col gap-4 mb-[18px]" > {/*onSubmit={handleSubmit}*/}
+        <form className="flex flex-col gap-4 mb-[18px]" onSubmit={handleSubmit}>
           
           <input
             type="text"
             placeholder="Email/Number"
+            className="w-full px-[18px] py-[12px] rounded-full text-sm
+            bg-white/90 text-gray-900 outline-none
+            shadow-[0_4px_16px_rgba(15,23,42,0.12)]
+            placeholder:text-slate-400
+            focus:shadow-[0_0_0_2px_rgba(56,189,248,0.6),0_12px_32px_rgba(15,23,42,0.25)]"
+          />
+
+          <input
+            type="text"
+            placeholder="Name"
             className="w-full px-[18px] py-[12px] rounded-full text-sm
             bg-white/90 text-gray-900 outline-none
             shadow-[0_4px_16px_rgba(15,23,42,0.12)]
@@ -60,23 +70,16 @@ const LoginPage = () => {
             focus:shadow-[0_0_0_2px_rgba(56,189,248,0.6),0_12px_32px_rgba(15,23,42,0.25)]"
           />
 
-          {/* forgot */}
-          <div className="flex justify-end mt-[2px] mb-[10px]">
-            <button type="button" className="text-blue-600 text-sm hover:underline">
-              Forgot password?
-            </button>
-          </div>
-
-          {/* login button */}
-          <button onClick={() => navigate("/home")}
-            type="button"
+          {/* Register button */}
+          <button
+            type="submit"
             className="w-[220px] max-w-full self-center py-3 rounded-full
             bg-white text-[#111111] font-extrabold text-[15px] tracking-[0.08em]
             shadow-[0_12px_36px_rgba(15,23,42,0.3)]
             transition-all duration-150 ease-out
             hover:-translate-y-[1px] hover:shadow-[0_18px_44px_rgba(15,23,42,0.38)] hover:bg-gray-50
             active:translate-y-0 active:shadow-[0_10px_28px_rgba(15,23,42,0.3)]">
-            LOGIN
+            Register
           </button>
         </form>
 
@@ -110,9 +113,9 @@ const LoginPage = () => {
 
         {/* footer */}
         <p className="text-center text-[12px] text-[#5f6c80]">
-          Don&apos;t have an account?{" "}
-          <button onClick={() => navigate("/register")} className="text-blue-600 underline ml-1 font-bold">
-            Sign up
+          Already have an account?{" "}
+          <button onClick={() => navigate("/login")} className="text-blue-600 underline ml-1 font-bold">
+            Login
           </button>
         </p>
 
@@ -121,4 +124,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Register;
