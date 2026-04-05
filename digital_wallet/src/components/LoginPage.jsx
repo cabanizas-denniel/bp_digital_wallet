@@ -1,11 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  {/*const handleSubmit = (e) => {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  }; */}
+    setError("");
+
+    if (!form.email || !form.password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost/bp_digital_wallet/backend/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/home");
+      } else {
+        setError(data.message);
+      }
+    } catch {
+      setError("Could not connect to server.");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#bdefff] p-6 relative overflow-hidden font-sans">
@@ -14,16 +45,12 @@ const LoginPage = () => {
       <div className="absolute inset-0 pointer-events-none blur-[4px]">
         <span className="absolute w-[260px] h-[260px] rounded-full opacity-90 top-[8%] left-[8%]
           bg-[radial-gradient(circle_at_30%_30%,#6afc7b,#3a8b00)]" />
-
         <span className="absolute w-[220px] h-[220px] rounded-full opacity-90 top-[12%] right-[6%]
           bg-[radial-gradient(circle_at_30%_30%,#ff4d94,#7b0040)]" />
-
         <span className="absolute w-[260px] h-[260px] rounded-full opacity-90 top-[40%] right-[18%]
           bg-[radial-gradient(circle_at_20%_40%,#7b9dff,#192b7a)]" />
-
         <span className="absolute w-[220px] h-[220px] rounded-full opacity-90 bottom-[4%] right-[5%]
           bg-[radial-gradient(circle_at_40%_20%,#f9c97a,#b86a1a)]" />
-
         <span className="absolute w-[220px] h-[220px] rounded-full opacity-90 bottom-[10%] left-[10%]
           bg-[radial-gradient(circle_at_30%_60%,#ff7a7a,#7a1111)]" />
       </div>
@@ -39,11 +66,14 @@ const LoginPage = () => {
           Welcome Back
         </h1>
 
-        <form className="flex flex-col gap-4 mb-[18px]" > {/*onSubmit={handleSubmit}*/}
-          
+        <form className="flex flex-col gap-4 mb-[18px]" onSubmit={handleSubmit}>
+
           <input
-            type="text"
-            placeholder="Email/Number"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
             className="w-full px-[18px] py-[12px] rounded-full text-sm
             bg-white/90 text-gray-900 outline-none
             shadow-[0_4px_16px_rgba(15,23,42,0.12)]
@@ -53,7 +83,10 @@ const LoginPage = () => {
 
           <input
             type="password"
+            name="password"
             placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
             className="w-full px-[18px] py-[12px] rounded-full text-sm
             bg-white/90 text-gray-900 outline-none
             shadow-[0_4px_16px_rgba(15,23,42,0.12)]
@@ -68,9 +101,15 @@ const LoginPage = () => {
             </button>
           </div>
 
+          {error && (
+            <p className="text-red-600 text-sm text-center font-semibold bg-red-50/80 rounded-full py-2 px-4">
+              {error}
+            </p>
+          )}
+
           {/* login button */}
-          <button onClick={() => navigate("/home")}
-            type="button"
+          <button
+            type="submit"
             className="w-[220px] max-w-full self-center py-3 rounded-full
             bg-white text-[#111111] font-extrabold text-[15px] tracking-[0.08em]
             shadow-[0_12px_36px_rgba(15,23,42,0.3)]
@@ -114,7 +153,7 @@ const LoginPage = () => {
           Don&apos;t have an account?{" "}
           <button
             type="button"
-            className="link-button underline"
+            className="text-blue-600 underline ml-1 font-bold"
             onClick={() => navigate("/register")}>
             Sign up
           </button>
