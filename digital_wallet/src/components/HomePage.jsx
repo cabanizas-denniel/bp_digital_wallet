@@ -10,7 +10,7 @@ const HomePage = () => {
     <div className="min-h-screen w-full flex items-center justify-center bg-[#bdefff] p-6 relative overflow-hidden font-sans">
 
       {/* blobs */}
-      {/*<div className="absolute inset-0 pointer-events-none blur-[4px]">
+      <div className="absolute inset-0 pointer-events-none blur-[4px]">
         <span className="absolute w-[260px] h-[260px] rounded-full opacity-90 top-[8%] left-[8%]
           bg-[radial-gradient(circle_at_30%_30%,#6afc7b,#3a8b00)]" />
 
@@ -25,7 +25,7 @@ const HomePage = () => {
 
         <span className="absolute w-[220px] h-[220px] rounded-full opacity-90 bottom-[10%] left-[10%]
           bg-[radial-gradient(circle_at_30%_60%,#ff7a7a,#7a1111)]" />
-      </div>*/}
+      </div>
 
       {/* card */}
       <div className="relative w-full max-w-[920px] px-6 py-7 md:px-[72px] md:pt-[56px] md:pb-[40px]

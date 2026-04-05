@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
 const LoginPage = () => {
   const navigate = useNavigate();
   {/*const handleSubmit = (e) => {
@@ -111,7 +112,10 @@ const LoginPage = () => {
         {/* footer */}
         <p className="text-center text-[12px] text-[#5f6c80]">
           Don&apos;t have an account?{" "}
-          <button onClick={() => navigate("/register")} className="text-blue-600 underline ml-1 font-bold">
+          <button
+            type="button"
+            className="link-button underline"
+            onClick={() => navigate("/register")}>
             Sign up
           </button>
         </p>
