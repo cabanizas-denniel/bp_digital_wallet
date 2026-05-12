@@ -5,7 +5,9 @@ import LoginPage from "./components/LoginPage";
 import Register from "./components/RegisterPage";
 import HomePage from "./components/HomePage";
 import ProfilePage from "./components/ProfilePage";
+import TransactionsPage from "./components/TransactionsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import WalletLayout from "./components/WalletLayout";
 
 function App() {
   return (
@@ -15,23 +17,13 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<WalletLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

@@ -1,8 +1,12 @@
 import React from "react";
 
-const BlurBackground = () => {
+/** Decorative blurred gradient orbs — sits above base tint, below content. */
+const BlurBackground = ({ className = "" }) => {
   return (
-    <div className="absolute inset-0 pointer-events-none blur-[4px]">
+    <div
+      className={`pointer-events-none blur-[4px] ${className}`}
+      aria-hidden
+    >
       <span
         className="absolute w-[260px] h-[260px] rounded-full opacity-90 top-[8%] left-[8%]
         bg-[radial-gradient(circle_at_30%_30%,#6afc7b,#3a8b00)]"

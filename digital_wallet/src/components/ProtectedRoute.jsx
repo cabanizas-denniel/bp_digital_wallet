@@ -1,9 +1,10 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
+/** Wrap nested routes; redirects to login when no session in localStorage. */
+const ProtectedRoute = () => {
   const user = localStorage.getItem("user");
-  return user ? children : <Navigate to="/login" replace />;
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

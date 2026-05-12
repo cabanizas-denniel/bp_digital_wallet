@@ -1,11 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { House, User, LogOut, Menu, X } from "lucide-react";
+import { House, User, LogOut, Receipt } from "lucide-react";
 
+const CLOSE_DELAY_MS = 0;
+
+/** Desktop: collapsed rail by default; hover expands; no toggle button. */
 const Sidebar = () => {
-  const [open, setOpen] = useState(true); // Control state for both desktop collapse and mobile drawer
+  const [open, setOpen] = useState(false);
+  const closeTimerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const cancelClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const handleEnter = () => {
+    cancelClose();
+    setOpen(true);
+  };
+
+  const handleLeave = () => {
+    cancelClose();
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpen(false);
+      closeTimerRef.current = null;
+    }, CLOSE_DELAY_MS);
+  };
+
+  useEffect(() => () => cancelClose(), []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -14,64 +40,65 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Home", path: "/home", icon: <House size={22} /> },
+    { name: "History", path: "/transactions", icon: <Receipt size={22} /> },
     { name: "Profile", path: "/profile", icon: <User size={22} /> },
   ];
 
+  const widthEase =
+    "transition-[width] duration-[380ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none";
+
   return (
     <>
-      {/* MOBILE HAMBURGER BUTTON  */}
-      {/* Only visible on small screens when sidebar is closed */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="lg:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white p-2 rounded-md shadow-lg"
-        >
-          <Menu size={24} />
-        </button>
-      )}
-
-      {/*  MOBILE OVERLAY  */}
-      {open && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden" 
-          onClick={() => setOpen(false)}
-        />
-      )}
-
-      {/* SIDEBAR CONTAINER  */}
-      <div
-        className={`fixed top-0 left-0 h-screen bg-[#0a0a1a] text-white flex flex-col justify-between transition-all duration-300 z-40 border-r border-white/10
-        ${open ? "w-64 translate-x-0" : "w-20 -translate-x-full lg:translate-x-0"}`}
+      <aside
+        className={`fixed top-0 left-0 z-40 hidden h-screen shrink-0 flex-col justify-between overflow-hidden border-r border-white/10 bg-[#0a0a1a] text-white lg:flex ${widthEase} ${
+          open ? "w-64" : "w-20"
+        }`}
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
       >
-        {/* Top Section */}
-        <div className="flex flex-col">
-          {/* Header Area */}
-          <div className="flex items-center justify-between px-4 mt-6 mb-6 h-10 flex flex-col">
-            
-            {/* Toggle Button: Swaps between 'Close' for mobile and 'Collapse' for desktop */}
-            <button
-              onClick={() => setOpen(!open)}
-              className="text-gray-400 hover:text-white transition-colors"
+        <div className="flex flex-col pt-6">
+          <Link
+            to="/home"
+            className={`mx-3 mb-5 flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-white/5 ${
+              open ? "" : "justify-center px-0"
+            }`}
+            title="Digital Wallet"
+          >
+            <img
+              src={`${process.env.PUBLIC_URL}/logo192.png`}
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-lg bg-white/10 object-contain ring-1 ring-white/15"
+            />
+            <span
+              className={`truncate text-sm font-bold tracking-tight text-white/95 transition-[opacity] duration-[280ms] ease-out motion-reduce:transition-none ${
+                open ? "opacity-100 delay-75" : "w-0 overflow-hidden opacity-0 delay-0"
+              }`}
             >
-              {open ? <X size={24} className="lg:hidden" /> : null}
-              {/* Desktop Collapse Icon (shows when open) */}
-              <Menu size={24} className={`hidden lg:block ${!open && "mx-auto"}`} />
-            </button>
-          </div>
-          
+              Digital Wallet
+            </span>
+          </Link>
 
-          {/* Navigation */}
-          <nav className="space-y-2 px-3 mt-4">
+          <nav className="space-y-2 px-3">
             {menuItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.path}
-                className={`flex items-center p-3 rounded-xl transition-all duration-200 group
-                ${location.pathname === item.path ? "bg-blue-600 text-white" : "hover:bg-gray-800 text-gray-400 hover:text-white"}`}
+                className={`flex items-center rounded-xl p-3 transition-colors duration-200 group ${
+                  location.pathname === item.path
+                    ? "bg-wallet-primary text-white"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                }`}
               >
-                <div className="min-w-[24px] flex justify-center">{item.icon}</div>
-                <span className={`ml-3 whitespace-nowrap transition-all duration-300 
-                  ${open ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"}`}>
+                <div className="flex min-w-[24px] justify-center">{item.icon}</div>
+                <span
+                  className={`ml-3 whitespace-nowrap transition-[opacity,max-width] duration-[280ms] ease-out motion-reduce:transition-none ${
+                    open
+                      ? "max-w-[12rem] opacity-100 delay-75"
+                      : "max-w-0 overflow-hidden opacity-0 delay-0"
+                  }`}
+                >
                   {item.name}
                 </span>
               </Link>
@@ -79,26 +106,31 @@ const Sidebar = () => {
           </nav>
         </div>
 
-        {/* Bottom Section */}
-        <div className="px-3 mb-6">
+        <div className="mb-6 px-3">
           <button
+            type="button"
             onClick={handleLogout}
-            className="w-full p-3 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-white transition-all flex items-center group"
+            className="group flex w-full items-center rounded-xl p-3 text-gray-400 transition-colors duration-200 hover:bg-gray-800 hover:text-white"
           >
-            <div className="min-w-[24px] flex justify-center">
+            <div className="flex min-w-[24px] justify-center">
               <LogOut size={22} />
             </div>
-            <span className={`ml-3 whitespace-nowrap transition-all duration-300 
-              ${open ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"}`}>
+            <span
+              className={`ml-3 whitespace-nowrap transition-[opacity,max-width] duration-[280ms] ease-out motion-reduce:transition-none ${
+                open
+                  ? "max-w-[12rem] opacity-100 delay-75"
+                  : "max-w-0 overflow-hidden opacity-0 delay-0"
+              }`}
+            >
               LOGOUT
             </span>
           </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Main Content Spacer (Optional) */}
-      {/* This helps push your page content so it doesn't sit under the sidebar on desktop */}
-      <div className={`transition-all duration-300 hidden lg:block ${open ? "ml-64" : "ml-20"}`} />
+      <div
+        className={`hidden shrink-0 lg:block ${widthEase} ${open ? "w-64" : "w-20"}`}
+      />
     </>
   );
 };
